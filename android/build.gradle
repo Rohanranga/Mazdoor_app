@@ -1,13 +1,17 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
+    ext.kotlin_version = '1.7.10'  // Specify Kotlin version (use the latest stable version recommended)
+
     repositories {
         google()
         mavenCentral()
     }
+
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.0.4' // Use the correct Gradle version for your project
+        classpath 'com.android.tools.build:gradle:7.0.4' // Gradle version for Android
         classpath 'com.google.gms:google-services:4.4.2' // Google services dependency
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version" // Add the Kotlin Gradle plugin
     }
 }
 
