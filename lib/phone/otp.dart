@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:mazdoor_user/HomePage/homepage.dart';
 import 'package:mazdoor_user/HomePage/services.dart';
 import 'package:mazdoor_user/locationscreen.dart';
 
@@ -37,7 +38,7 @@ class _OTPState extends State<OTP> {
       if (userCredential.user != null) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => LocationScreen()),
+          MaterialPageRoute(builder: (context) => Homepage(location: '',)),
         );
       }
     } catch (e) {
