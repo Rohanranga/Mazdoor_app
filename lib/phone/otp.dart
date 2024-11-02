@@ -38,8 +38,8 @@ class _OTPState extends State<OTP> {
       if (userCredential.user != null) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => Homepage(location: '',)),
-        );
+          MaterialPageRoute(builder: (context) => LocationScreen(),
+        ));
       }
     } catch (e) {
       // If OTP is incorrect or something goes wrong, show a snackbar
