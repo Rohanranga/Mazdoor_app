@@ -43,14 +43,15 @@ class UserProfilePage extends StatelessWidget {
                 ),
                 CircleAvatar(
                   radius: 40,
-                  backgroundImage: AssetImage('assets/user_avatar.png'), // Replace with user image
+                  backgroundImage: AssetImage(
+                      'assets/user_avatar.png'), // Replace with user image
                 ),
               ],
             ),
             SizedBox(height: 20),
             // Action buttons: My Bookings and Help & Support
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 _buildActionButton(
                   icon: Icons.calendar_today,
@@ -117,12 +118,14 @@ class UserProfilePage extends StatelessWidget {
         ),
       ),
       // Bottom Navigation Bar
-
     );
   }
 
   // Widget for profile options like 'Change Password', 'Notifications', etc.
-  Widget _buildProfileOption({required IconData icon, required String label, required VoidCallback onTap}) {
+  Widget _buildProfileOption(
+      {required IconData icon,
+      required String label,
+      required VoidCallback onTap}) {
     return ListTile(
       leading: Icon(icon, color: Colors.black),
       title: Text(label),
@@ -132,7 +135,10 @@ class UserProfilePage extends StatelessWidget {
   }
 
   // Widget for action buttons like 'My Bookings', 'Help & support'
-  Widget _buildActionButton({required IconData icon, required String label, required VoidCallback onTap}) {
+  Widget _buildActionButton(
+      {required IconData icon,
+      required String label,
+      required VoidCallback onTap}) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
