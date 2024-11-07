@@ -2,12 +2,12 @@
   "project_info": {
     "project_number": "206094610648",
     "project_id": "easy-mazdoor-559d2",
-    "storage_bucket": "easy-mazdoor-559d2.appspot.com"
+    "storage_bucket": "easy-mazdoor-559d2.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:206094610648:android:7b72f6befb4b6b796b67ad",
+        "mobilesdk_app_id": "1:206094610648:android:f208b8f8f7c9d28b6b67ad",
         "android_client_info": {
           "package_name": "com.example.mazdoor_user"
         }
