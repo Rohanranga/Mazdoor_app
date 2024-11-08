@@ -1,6 +1,47 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:mazdoor_user/user_details_page.dart';
 
-class UserProfilePage extends StatelessWidget {
+class UserProfilePage extends StatefulWidget {
+  @override
+  _UserProfilePageState createState() => _UserProfilePageState();
+}
+
+class _UserProfilePageState extends State<UserProfilePage> {
+  String? userName;
+  String? phoneNumber;
+  String? profileImageUrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserData();
+  }
+
+  // Fetch user data from Firestore using the logged-in user's phone number
+  Future<void> _fetchUserData() async {
+    try {
+      String? phone = FirebaseAuth.instance.currentUser?.phoneNumber;
+      if (phone != null) {
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(phone)
+            .get();
+
+        if (userDoc.exists) {
+          setState(() {
+            userName = userDoc['name'];
+            phoneNumber = phone;
+            profileImageUrl = userDoc['profileImageUrl'];
+          });
+        }
+      }
+    } catch (e) {
+      print("Error fetching user data: $e");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -9,7 +50,7 @@ class UserProfilePage extends StatelessWidget {
         elevation: 0,
         automaticallyImplyLeading: false,
         title: Text(
-          'Hello',
+          'Hello, ${userName ?? 'User'}',
           style: TextStyle(color: Colors.orange),
         ),
       ),
@@ -26,14 +67,14 @@ class UserProfilePage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Atharv Tiwari',
+                      userName ?? 'Loading...',
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     Text(
-                      '+91 1234567890',
+                      phoneNumber ?? '',
                       style: TextStyle(
                         fontSize: 16,
                         color: Colors.black54,
@@ -43,8 +84,10 @@ class UserProfilePage extends StatelessWidget {
                 ),
                 CircleAvatar(
                   radius: 40,
-                  backgroundImage: AssetImage(
-                      'assets/user_avatar.png'), // Replace with user image
+                  backgroundImage: profileImageUrl != null
+                      ? NetworkImage(profileImageUrl!)
+                      : AssetImage('assets/user_avatar.png')
+                          as ImageProvider, // Default image if no profile image is found
                 ),
               ],
             ),
@@ -85,9 +128,9 @@ class UserProfilePage extends StatelessWidget {
                   ),
                   _buildProfileOption(
                     icon: Icons.lock_outline,
-                    label: 'Change Password',
+                    label: 'Change Phonenumber',
                     onTap: () {
-                      // Handle navigation to Change Password
+                      // Handle navigation to Change Phone number
                     },
                   ),
                   _buildProfileOption(
@@ -108,7 +151,11 @@ class UserProfilePage extends StatelessWidget {
                     icon: Icons.settings_outlined,
                     label: 'Account Settings',
                     onTap: () {
-                      // Handle navigation to Account Settings
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => UserDetailsScreen()),
+                      );
                     },
                   ),
                 ],
@@ -122,10 +169,11 @@ class UserProfilePage extends StatelessWidget {
   }
 
   // Widget for profile options like 'Change Password', 'Notifications', etc.
-  Widget _buildProfileOption(
-      {required IconData icon,
-      required String label,
-      required VoidCallback onTap}) {
+  Widget _buildProfileOption({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
     return ListTile(
       leading: Icon(icon, color: Colors.black),
       title: Text(label),
@@ -135,10 +183,11 @@ class UserProfilePage extends StatelessWidget {
   }
 
   // Widget for action buttons like 'My Bookings', 'Help & support'
-  Widget _buildActionButton(
-      {required IconData icon,
-      required String label,
-      required VoidCallback onTap}) {
+  Widget _buildActionButton({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
