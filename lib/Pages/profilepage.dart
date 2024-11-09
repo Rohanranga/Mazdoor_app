@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:mazdoor_user/phone/change_number.dart';
 import 'package:mazdoor_user/user_details_page.dart';
 
 class UserProfilePage extends StatefulWidget {
@@ -130,6 +131,11 @@ class _UserProfilePageState extends State<UserProfilePage> {
                     icon: Icons.lock_outline,
                     label: 'Change Phonenumber',
                     onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ChangePhoneNumberScreen()),
+                      );
                       // Handle navigation to Change Phone number
                     },
                   ),
