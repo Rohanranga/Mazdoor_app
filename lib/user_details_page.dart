@@ -1,7 +1,10 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:intl/intl.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 
 class UserDetailsScreen extends StatefulWidget {
   @override
@@ -13,15 +16,17 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _ageController = TextEditingController();
   DateTime? _selectedDate;
-  String _gender = 'Male';
+  String _gender = '';
+  String _profileImageUrl = '';
+  File? _profileImage;
 
   @override
   void initState() {
     super.initState();
-    _loadUserData(); // Load data when the screen loads
+    _loadUserData(); // Load data and image when the screen loads
   }
 
-  // Fetch and display data based on logged-in user's phone number
+  // Fetch user data and image URL
   Future<void> _loadUserData() async {
     String? phoneNumber = FirebaseAuth.instance.currentUser?.phoneNumber;
     if (phoneNumber != null) {
@@ -35,34 +40,48 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
         _nameController.text = userData['name'] ?? '';
         _emailController.text = userData['email'] ?? '';
         _ageController.text = userData['age']?.toString() ?? '';
-        _gender = userData['gender'] ?? 'Male';
+        _gender = userData['gender'] ?? '';
         if (userData['dob'] != null) {
           _selectedDate = (userData['dob'] as Timestamp).toDate();
+        }
+        if (userData['profileImageUrl'] != null) {
+          _profileImageUrl = userData['profileImageUrl'];
         }
         setState(() {});
       }
     }
   }
 
-  // Save or update user data in Firestore with phone number as document ID
+  // Save or update user data and upload image if selected
   Future<void> _saveUserData() async {
     String? phoneNumber = FirebaseAuth.instance.currentUser?.phoneNumber;
     if (phoneNumber != null) {
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(phoneNumber)
-          .set({
-        'name': _nameController.text,
-        'email': _emailController.text,
-        'age': int.tryParse(_ageController.text),
-        'dob':
-            _selectedDate != null ? Timestamp.fromDate(_selectedDate!) : null,
-        'gender': _gender,
-      }, SetOptions(merge: true));
+      if (_profileImage != null) {
+        await _uploadProfileImage(phoneNumber);
+      }
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('User data saved successfully')),
-      );
+      try {
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(phoneNumber)
+            .set({
+          'name': _nameController.text,
+          'email': _emailController.text,
+          'age': int.tryParse(_ageController.text),
+          'dob':
+              _selectedDate != null ? Timestamp.fromDate(_selectedDate!) : null,
+          'gender': _gender,
+          'profileImageUrl': _profileImageUrl, // Save the image URL
+        }, SetOptions(merge: true));
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('User  data saved successfully')),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to save user data: $e')),
+        );
+      }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Phone number not found')),
@@ -70,7 +89,49 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
     }
   }
 
-  // Date picker for selecting DOB
+  // Upload the selected image to Firebase Storage and get the URL
+  Future<void> _uploadProfileImage(String phoneNumber) async {
+    if (_profileImage == null) return;
+
+    try {
+      final storageRef = FirebaseStorage.instance
+          .ref()
+          .child('profile_images')
+          .child('$phoneNumber.jpg');
+
+      // Upload the file
+      UploadTask uploadTask = storageRef.putFile(_profileImage!);
+      TaskSnapshot snapshot = await uploadTask;
+
+      if (snapshot.state == TaskState.success) {
+        _profileImageUrl = await storageRef.getDownloadURL();
+        setState(() {}); // Update UI with new image URL
+      } else {
+        throw Exception('Upload failed');
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to upload image: $e')),
+      );
+    }
+  }
+
+  // Select image using image picker
+  Future<void> _selectImage() async {
+    final picker = ImagePicker();
+    final pickedImage = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedImage != null) {
+      setState(() {
+        _profileImage = File(pickedImage.path);
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(' No image selected')),
+      );
+    }
+  }
+
+  // Pick date of birth
   Future<void> _pickDateOfBirth() async {
     DateTime? pickedDate = await showDatePicker(
       context: context,
@@ -88,12 +149,28 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('User Details')),
+      appBar: AppBar(title: Text('User  Details')),
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Center(
+              child: GestureDetector(
+                onTap: _selectImage,
+                child: CircleAvatar(
+                  radius: 50,
+                  backgroundImage: _profileImage != null
+                      ? FileImage(_profileImage!)
+                      : (_profileImageUrl.isNotEmpty
+                          ? NetworkImage(_profileImageUrl)
+                          : null),
+                  child: _profileImage == null && _profileImageUrl.isEmpty
+                      ? Icon(Icons.add_a_photo, size: 30)
+                      : null,
+                ),
+              ),
+            ),
             TextField(
               controller: _nameController,
               decoration: InputDecoration(labelText: 'Name'),
