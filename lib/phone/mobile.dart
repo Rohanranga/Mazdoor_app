@@ -15,7 +15,8 @@ class _MobileState extends State<Mobile> {
   void _checkPhoneNumber(String value) {
     setState(() {
       phone = value; // Update the phone variable with the entered value
-      _isValidNumber = RegExp(r'^\d{10}$').hasMatch(value); // Check if it's a 10-digit number
+      _isValidNumber = RegExp(r'^\d{10}$')
+          .hasMatch(value); // Check if it's a 10-digit number
     });
   }
 
@@ -25,13 +26,14 @@ class _MobileState extends State<Mobile> {
     double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      resizeToAvoidBottomInset: false,  // Prevent the screen from resizing automatically
+      resizeToAvoidBottomInset:
+          false, // Prevent the screen from resizing automatically
       body: Stack(
         children: [
           // Background image
           Positioned.fill(
             child: Image.asset(
-              'assets/images/mazdoor_background.png', // Path to your single image asset
+              'assets/images/mazdoor_background.pngzz', // Path to your single image asset
               fit: BoxFit.cover,
             ),
           ),
@@ -95,43 +97,51 @@ class _MobileState extends State<Mobile> {
                     ),
                     onPressed: _isValidNumber
                         ? () async {
-                      // Prepare the full phone number
-                      String fullPhoneNumber = '+91$phone';
+                            // Prepare the full phone number
+                            String fullPhoneNumber = '+91$phone';
 
-                      // Start verification
-                      await FirebaseAuth.instance.verifyPhoneNumber(
-                        phoneNumber: fullPhoneNumber,
-                        verificationCompleted: (PhoneAuthCredential credential) {
-                          FirebaseAuth.instance.signInWithCredential(credential);
-                        },
-                        verificationFailed: (FirebaseAuthException e) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Verification failed: ${e.message}'),
-                            ),
-                          );
-                        },
-                        codeSent: (String verificationId, int? resendToken) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => OTP(verificationId: verificationId),
-                            ),
-                          );
-                        },
-                        codeAutoRetrievalTimeout: (String verificationId) {
-                          print('Code auto retrieval timeout: $verificationId');
-                        },
-                      );
-                    }
+                            // Start verification
+                            await FirebaseAuth.instance.verifyPhoneNumber(
+                              phoneNumber: fullPhoneNumber,
+                              verificationCompleted:
+                                  (PhoneAuthCredential credential) {
+                                FirebaseAuth.instance
+                                    .signInWithCredential(credential);
+                              },
+                              verificationFailed: (FirebaseAuthException e) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                        'Verification failed: ${e.message}'),
+                                  ),
+                                );
+                              },
+                              codeSent:
+                                  (String verificationId, int? resendToken) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        OTP(verificationId: verificationId),
+                                  ),
+                                );
+                              },
+                              codeAutoRetrievalTimeout:
+                                  (String verificationId) {
+                                print(
+                                    'Code auto retrieval timeout: $verificationId');
+                              },
+                            );
+                          }
                         : () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Please enter a valid 10-digit number'),
-                          duration: Duration(seconds: 2),
-                        ),
-                      );
-                    },
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                    'Please enter a valid 10-digit number'),
+                                duration: Duration(seconds: 2),
+                              ),
+                            );
+                          },
                     child: Text(
                       'Continue',
                       style: TextStyle(
@@ -142,7 +152,9 @@ class _MobileState extends State<Mobile> {
                     ),
                   ),
                 ),
-                SizedBox(height: 10), // Smaller space between button and consent text
+                SizedBox(
+                    height:
+                        10), // Smaller space between button and consent text
                 Text(
                   'By proceeding, you consent to get calls, WhatsApp, or SMS/RCS messages, including by automated means, from EasyMazdoor and its affiliates to the number provided.',
                   style: TextStyle(

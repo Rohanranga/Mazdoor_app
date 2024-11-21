@@ -1,4 +1,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Permissions for accessing location -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <!-- Permission to read phone state for OTP verification -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
+    <!-- Required for Firebase Authentication and push notifications -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:label="mazdoor_user"
         android:name="${applicationName}"
@@ -31,11 +41,8 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-    </application>
 
-    <!-- Permissions for accessing location -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    </application>
 
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and

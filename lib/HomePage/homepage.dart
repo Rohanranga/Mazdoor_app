@@ -14,7 +14,10 @@ class Homepage extends StatelessWidget {
     final screenHeight = MediaQuery.of(context).size.height;
     final appBarHeight = AppBar().preferredSize.height;
     final bottomNavHeight = kBottomNavigationBarHeight;
-    final availableHeight = screenHeight - appBarHeight - bottomNavHeight - 48; // Leave space for padding
+    final availableHeight = screenHeight -
+        appBarHeight -
+        bottomNavHeight -
+        48; // Leave space for padding
 
     return Scaffold(
       appBar: AppBar(
@@ -32,7 +35,8 @@ class Homepage extends StatelessWidget {
                 location,
                 style: TextStyle(color: Colors.black, fontSize: 16),
                 maxLines: 2, // Allow up to 2 lines
-                overflow: TextOverflow.ellipsis, // Add ellipsis if text is too long
+                overflow:
+                    TextOverflow.ellipsis, // Add ellipsis if text is too long
               ),
             ),
           ],
@@ -40,7 +44,8 @@ class Homepage extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView( // Scrollable if overflow occurs
+        child: SingleChildScrollView(
+          // Scrollable if overflow occurs
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -121,12 +126,10 @@ class Homepage extends StatelessWidget {
                     // Button to "Explore all Services"
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.grey[300],
-                        minimumSize: Size(double.infinity, 30), // Full width
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)
-                        )
-                      ),
+                          backgroundColor: Colors.grey[300],
+                          minimumSize: Size(double.infinity, 30), // Full width
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10))),
                       onPressed: () {
                         Navigator.push(
                           context,
@@ -148,14 +151,18 @@ class Homepage extends StatelessWidget {
               Container(
                 height: availableHeight * 0.3, // 30% of available height
                 color: Colors.orange[200], // Placeholder color
-                child: Center(child: Text('Second Row (Smaller)', style: TextStyle(fontSize: 16))),
+                child: Center(
+                    child: Text('Second Row (Smaller)',
+                        style: TextStyle(fontSize: 16))),
               ),
               SizedBox(height: 10),
               // Third row (same size as second)
               Container(
                 height: availableHeight * 0.4, // 40% of available height
                 color: Colors.orange[300], // Placeholder color
-                child: Center(child: Text('Third Row (Same as Second)', style: TextStyle(fontSize: 16))),
+                child: Center(
+                    child: Text('Third Row (Same as Second)',
+                        style: TextStyle(fontSize: 16))),
               ),
             ],
           ),
@@ -179,8 +186,7 @@ class ImageButton extends StatelessWidget {
     required this.imagePath,
     required this.label,
     required this.onPressed,
-    
-    this.isRectangle = false, 
+    this.isRectangle = false,
     this.width = 100.0,
     // Default is false (square)
   });
@@ -194,7 +200,8 @@ class ImageButton extends StatelessWidget {
         height: isRectangle ? 120 : 140, // Adjusted height
         decoration: BoxDecoration(
           color: Colors.grey[300], // Solid grey background for the image button
-          borderRadius: BorderRadius.circular(10), // Border radius for the image
+          borderRadius:
+              BorderRadius.circular(10), // Border radius for the image
           boxShadow: [
             BoxShadow(
               color: Colors.grey.withOpacity(0.5),
@@ -209,7 +216,8 @@ class ImageButton extends StatelessWidget {
             Image.asset(
               imagePath,
               width: isRectangle ? 160 : 100,
-              height: isRectangle ? 60 : 80, // Adjust the image size accordingly
+              height:
+                  isRectangle ? 60 : 80, // Adjust the image size accordingly
               fit: BoxFit.cover,
             ),
             SizedBox(height: 8), // Space between image and text

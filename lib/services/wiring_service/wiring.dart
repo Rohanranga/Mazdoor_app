@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class FanInstallationPage extends StatefulWidget {
+class WiringPage extends StatefulWidget {
+  const WiringPage({super.key});
+
   @override
-  _FanInstallationPageState createState() => _FanInstallationPageState();
+  _WiringPageState createState() => _WiringPageState();
 }
 
-class _FanInstallationPageState extends State<FanInstallationPage> {
+class _WiringPageState extends State<WiringPage> {
   final _formKey = GlobalKey<FormState>();
   String? name;
   String? address;
@@ -23,9 +25,8 @@ class _FanInstallationPageState extends State<FanInstallationPage> {
   // Fetch price dynamically from Firebase or create the document if it doesn't exist
   void fetchOrCreatePrice() async {
     try {
-      DocumentReference docRef = FirebaseFirestore.instance
-          .collection('prices')
-          .doc('fan_installation');
+      DocumentReference docRef =
+          FirebaseFirestore.instance.collection('prices').doc('switch_sockets');
 
       DocumentSnapshot snapshot = await docRef.get();
 
@@ -71,7 +72,8 @@ class _FanInstallationPageState extends State<FanInstallationPage> {
         'address': address,
         'contact': contact,
         'price': price, // Include the service price
-        'booking_time': FieldValue.serverTimestamp(), // Add a timestamp of booking
+        'booking_time':
+            FieldValue.serverTimestamp(), // Add a timestamp of booking
       });
 
       // Show confirmation dialog
@@ -168,7 +170,9 @@ class _FanInstallationPageState extends State<FanInstallationPage> {
 
               // Display price or loader
               if (isLoading)
-                Center(child: CircularProgressIndicator()) // Show loading spinner while fetching price
+                Center(
+                    child:
+                        CircularProgressIndicator()) // Show loading spinner while fetching price
               else
                 Text(
                   'Service Price: ₹${price?.toStringAsFixed(2)}', // Changed to show Rupee symbol
